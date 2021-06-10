@@ -2,101 +2,126 @@ import React, {useState} from "react";
 
 function App() {
 
-  const [text, setText] = useState("");
-  const [equasion, setEquasion] useState({a: 0, b: 0, operator = ""});
-    
-  function solveEquasion(event) {
+  const [operator, setOperator] = useState("");
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const [solution, setSolution] = useState("");
+
+  function handleClick(event) {
+
+    //prevents the page from been refreshed after pushing a button
     event.preventDefault();
 
-    var result = 0;
+    const value = event.target.value;
 
-    setEquasion((prevEquasion) => {
-      return {
-        ...prevEquasion,
-        [b] : parseFloat(text)
-      });
+    if (solution !== "") {
+      setA(solution);
+      setB("");
+      setOperator("");
+      setSolution("");
+    } 
 
-    if (operator === "+") {
-      result =  a + b;
-    } else if (operator === "-") {
-      result = a - b;
-    } else if (operator === "*") {
-      result =  a * b;
-    } else if (operator === "/") {
-      result =  a / b;
+    if (value === "AC") {
+      clear();
+
+    } else if (value === "=") {
+      setSolution(solveEquasion());
+
+    } else if ((value === "+") || 
+               (value === "-") || 
+               (value === "*") || 
+               (value === "/")) {
+      setOperator(value);
+
+    } else if ((value === "0") ||
+               (value === "1") ||
+               (value === "2") ||
+               (value === "3") ||
+               (value === "4") ||
+               (value === "5") ||
+               (value === "6") ||
+               (value === "7") ||
+               (value === "8") ||
+               (value === "9") ||
+               (value === ",")) {
+      if (operator === "") {
+        setA((prevValue) => {
+          return prevValue + value;
+        });
+      } else {
+        setB((prevValue) => {
+          return prevValue + value;
+        });
+      }
     } else {
-      console.log("Error: inkorrekt operator");
+      console.log("Uups, something went wrong.");
     }
-
-    setText((prevValue) => {
-      return (prevValue + "=" + result);
-    });
   }
   
-  function handleClick(event) {
-    event.preventDefault();
-
-    const newValue = event.target.value;
-
-    setText((prevValue) => {
-      return (prevValue + newValue);
-    });
+  function clear() {
+    setA("");
+    setB("");
+    setOperator("");
+    setSolution("");
   }
-
-  function setOperator(event) {
-    event.preventDefault();
-
-    const newValue = event.target.value;
-
-    setEquasion((prevEquasion) => {
-      return {
-        ...prevEquasion,
-        [a] : parseFloat(text),
-        [operator] : newValue
-      });
-
-    setText((prevValue) => {
-      return (prevValue + newValue);
-    });
-  }
-
-  function clear(event) {
-    event.preventDefault();
-
-    setText("");
-    setEquasion({a: 0, b: 0, operator: ""});
+  
+  function solveEquasion() {
+    if (a !== "" && b !== "" && operator !== "") {
+      switch(operator) {
+        case "+":
+          return parseFloat(a)+ parseFloat(b);
+          break;
+        case "-":
+          return parseFloat(a) - parseFloat(b);
+          break;
+        case "*":
+          return parseFloat(a) * parseFloat(b);
+          break;
+        case "/":
+          if (b !== 0) {
+            return parseFloat(a) / parseFloat(b);
+          } else {
+            return "error";
+          }
+          break;
+        default:
+          return "wrong operator";
+      }
+    } else {
+      console.log("Please insert values first.");
+    }
   }
 
   return (
-    <div className="container">
-      <h1>{text}</h1>
+    <div classvalue="container">
+      <h1>{a + operator  + b + (solution !== "" ? "=" : "")  + solution}</h1>
       <table>
         <tbody>
           <tr>
             <td><button onClick={handleClick} value="7" >7</button></td>
             <td><button onClick={handleClick} value="8" >8</button></td> 
             <td><button onClick={handleClick} value="9" >9</button></td>
-            <td><button onClick={setOperator} value="+" >+</button></td>
+            <td><button onClick={handleClick} value="+" >+</button></td>
           </tr>
           <tr>
             <td><button onClick={handleClick} value="4" >4</button></td>
             <td><button onClick={handleClick} value="5" >5</button></td> 
             <td><button onClick={handleClick} value="6" >6</button></td>
-            <td><button onClick={setOperator} value="-" >-</button></td>
+            <td><button onClick={handleClick} value="-" >-</button></td>
           </tr>
           <tr>
             <th><button onClick={handleClick} value="1" >1</button></th>
             <th><button onClick={handleClick} value="2" >2</button></th> 
             <th><button onClick={handleClick} value="3" >3</button></th>
-            <td><button onClick={setOperator} value="*" >*</button></td>
+            <td><button onClick={handleClick} value="*" >*</button></td>
           </tr>
           <tr>
             <th><button onClick={handleClick} value="0" >0</button></th>
             <th><button onClick={handleClick} value="." >,</button></th> 
-            <th><button onClick={solveEquasion} value="=" >=</button></th>
-            <td><button onClick={setOperator} value="/" >/</button></td>
+            <th><button onClick={handleClick} value="=" >=</button></th>
+            <td><button onClick={handleClick} value="/" >/</button></td>
             
-            <td><button onClick={clear}>AC</button></td>
+            <td><button onClick={handleClick} value="AC" >AC</button></td>
           </tr>
 
         </tbody>
